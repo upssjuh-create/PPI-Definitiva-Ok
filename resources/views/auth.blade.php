@@ -251,35 +251,54 @@
                             >
                         </div>
 
-                        <!-- Curso -->
+                        <!-- Tipo de Usuário -->
                         <div class="mb-4">
-                            <label for="register-course" class="block text-sm font-medium text-gray-700 mb-2">
-                                Curso (não obrigatório)
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Tipo de Usuário
                             </label>
-                            <input 
-                                type="text" 
-                                id="register-course" 
-                                name="course" 
-                                placeholder="Seu curso"
+
+                            <select 
+                                id="register-type" 
+                                name="type" 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                onchange="updateFields()"
                                 required
                             >
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="aluno">Aluno</option>
+                                <option value="servidor">Servidor IFFAR</option>
+                                <option value="externo">Externo</option>
+                            </select>
                         </div>
 
-                        <!-- Semestre -->
-                        <div class="mb-4">
-                            <label for="register-semester" class="block text-sm font-medium text-gray-700 mb-2">
-                                Semestre (não obrigatório)
-                            </label>
-                            <input 
-                                type="number" 
-                                id="register-semester" 
-                                name="semester" 
-                                placeholder="Seu semestre"
-                                min="1"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
-                                required
-                            >
+                        <!-- Campos do ALUNO -->
+                        <div id="aluno-fields" style="display: none;">
+                            <!-- Curso -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Curso
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-course" 
+                                    name="course"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
+                                >
+                            </div>
+                        
+                            <!-- Semestre -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Semestre
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="register-semester" 
+                                    name="semester"
+                                    min="1"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
+                                >
+                            </div>
                         </div>
 
                         <!-- Senha -->
@@ -298,6 +317,68 @@
                             >
                         </div>
 
+                        <!-- Campos do SERVIDOR -->
+                        <div id="servidor-fields" style="display: none;">
+                            <!-- Código do Servidor -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Código de Verificação
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-code" 
+                                    name="server_code"
+                                    placeholder="Informe o código fornecido pelo IFFAR"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
+                                >
+                            </div>
+                        
+                            <!-- Setor -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Setor
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-sector" 
+                                    name="sector"
+                                    placeholder="Ex: Biblioteca, TI, Direção..."
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Campos do EXTERNO -->
+                        <div id="externo-fields" style="display: none;">
+                            <!-- Escola / Universidade -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Escola / Universidade
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-school" 
+                                    name="school"
+                                    placeholder="Instituição de origem"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
+                                >
+                            </div>
+                        
+                            <!-- Curso -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Curso
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-ext-course" 
+                                    name="external_course"
+                                    placeholder="Curso"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
+                                >
+                            </div>
+                        </div>
+                        
                         <!-- Confirmar Senha -->
                         <div class="mb-6">
                             <label for="register-password-confirm" class="block text-sm font-medium text-gray-700 mb-2">
@@ -531,6 +612,15 @@
             toggleMode();
             // Aqui você pode adicionar lógica específica para admin se necessário
         }
+
+        function updateFields() {
+            const tipo = document.getElementById("register-type").value;
+        
+            document.getElementById("aluno-fields").style.display = (tipo === "aluno") ? "block" : "none";
+            document.getElementById("servidor-fields").style.display = (tipo === "servidor") ? "block" : "none";
+            document.getElementById("externo-fields").style.display = (tipo === "externo") ? "block" : "none";
+        }
+
     </script>
 </body>
 </html>
