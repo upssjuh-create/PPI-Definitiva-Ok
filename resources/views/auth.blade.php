@@ -301,22 +301,6 @@
                             </div>
                         </div>
 
-                        <!-- Senha -->
-                        <div class="mb-4">
-                            <label for="register-password" class="block text-sm font-medium text-gray-700 mb-2">
-                                Senha
-                            </label>
-                            <input 
-                                type="password" 
-                                id="register-password" 
-                                name="password" 
-                                placeholder="Mínimo 8 caracteres"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
-                                required
-                                minlength="8"
-                            >
-                        </div>
-
                         <!-- Campos do SERVIDOR -->
                         <div id="servidor-fields" style="display: none;">
                             <!-- Código do Servidor -->
@@ -377,6 +361,22 @@
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
                                 >
                             </div>
+                        </div>
+                        
+                        <!-- Senha -->
+                        <div class="mb-4">
+                            <label for="register-password" class="block text-sm font-medium text-gray-700 mb-2">
+                                Senha
+                            </label>
+                            <input 
+                                type="password" 
+                                id="register-password" 
+                                name="password" 
+                                placeholder="Mínimo 8 caracteres"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                required
+                                minlength="8"
+                            >
                         </div>
                         
                         <!-- Confirmar Senha -->
