@@ -14,23 +14,24 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-
-        // Novo tipo (aluno, servidor, externo)
-        'type',
-
-        // aluno
+    
+        // Tipo do usuário (student, server, external)
+        'user_type',
+    
+        // Dados do aluno
         'registration_number',
         'course',
         'semester',
-
-        // servidor
+    
+        // Dados do servidor
+        'server_code',
         'sector',
-        'verification_code',
-
-        // externo
+    
+        // Dados do usuário externo
         'external_school',
         'external_course',
-
+    
+        // Outros
         'phone',
     ];
 
