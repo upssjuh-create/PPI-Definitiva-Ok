@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     // Registro de novo usuário
-        public function register(Request $request)
+    public function register(Request $request)
     {
         // Validação geral
         $validated = $request->validate([
@@ -21,20 +21,20 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
     
             // student / server / external
-            'user_type' => 'required|in:student,server,external',
+            'type' => 'required|in:student,server,external',
     
             // Campos do aluno
-            'registration_number' => 'required_if:user_type,student|nullable|string|max:50',
-            'course' => 'required_if:user_type,student|nullable|string|max:255',
-            'semester' => 'required_if:user_type,student|nullable|integer',
+            'registration_number' => 'required_if:type,student|nullable|string|max:50',
+            'course' => 'required_if:type,student|nullable|string|max:255',
+            'semester' => 'required_if:type,student|nullable|integer',
     
             // Campos do servidor
-            'server_code' => 'required_if:user_type,server|nullable|string|max:50',
-            'sector' => 'required_if:user_type,server|nullable|string|max:255',
+            'server_code' => 'required_if:type,server|nullable|string|max:50',
+            'sector' => 'required_if:type,server|nullable|string|max:255',
     
             // Campos do externo
-            'external_school' => 'required_if:user_type,external|nullable|string|max:255',
-            'external_course' => 'required_if:user_type,external|nullable|string|max:255',
+            'external_school' => 'required_if:type,external|nullable|string|max:255',
+            'external_course' => 'required_if:type,external|nullable|string|max:255',
     
             'phone' => 'nullable|string|max:20'
         ]);
@@ -45,7 +45,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
     
-            'user_type' => $validated['user_type'],
+            'type' => $validated['type'],
     
             // Aluno
             'registration_number' => $validated['registration_number'] ?? null,
@@ -72,7 +72,6 @@ class AuthController extends Controller
             'user' => $user,
         ], 201);
     }
-
 
     // Login
     public function login(Request $request)
