@@ -632,9 +632,9 @@
         function updateFields() {
             const userType = document.getElementById("register-user-type").value;
         
-            document.getElementById("aluno-fields").style.display = (tipo === "aluno") ? "block" : "none";
-            document.getElementById("servidor-fields").style.display = (tipo === "servidor") ? "block" : "none";
-            document.getElementById("externo-fields").style.display = (tipo === "externo") ? "block" : "none";
+            document.getElementById("aluno-fields").style.display = (userType === "student") ? "block" : "none";
+            document.getElementById("servidor-fields").style.display = (userType === "server") ? "block" : "none";
+            document.getElementById("externo-fields").style.display = (userType === "external") ? "block" : "none";
         }
 
     </script>
