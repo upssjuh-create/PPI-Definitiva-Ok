@@ -1,5 +1,4 @@
 <?php
-// database/migrations/2024_01_01_create_users_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,8 +15,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
 
-            // Novo tipo de usuário
-            $table->enum('type', ['aluno', 'servidor', 'externo']);
+            // Tipo de usuário: student | server | external
+            $table->enum('user_type', ['student', 'server', 'external'])
+                  ->default('student');
 
             // --- Dados do aluno ---
             $table->string('registration_number')->nullable()->unique();
@@ -25,10 +25,10 @@ return new class extends Migration
             $table->integer('semester')->nullable();
 
             // --- Dados do servidor ---
+            $table->string('server_code')->nullable();
             $table->string('sector')->nullable();
-            $table->string('verification_code')->nullable();
 
-            // --- Dados do externo ---
+            // --- Dados do usuário externo ---
             $table->string('external_school')->nullable();
             $table->string('external_course')->nullable();
 
