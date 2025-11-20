@@ -245,7 +245,7 @@
                                 type="text" 
                                 id="register-registration" 
                                 name="registration_number" 
-                                placeholder="Sua matrícula"
+                                placeholder="Sua CPF"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
                                 required
                             >
@@ -282,6 +282,7 @@
                                     type="text" 
                                     id="register-course" 
                                     name="course"
+                                    placeholder="Qual seu curso?"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
                                 >
                             </div>
@@ -295,6 +296,7 @@
                                     type="number" 
                                     id="register-semester" 
                                     name="semester"
+                                    placeholder="Qual seu semestre?"
                                     min="1"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
                                 >
@@ -598,9 +600,16 @@
                 }
         
                 if (response.ok) {
-                    localStorage.setItem('auth_token', data.access_token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = '/events';
+                    // Exibe uma mensagem de sucesso
+                    const successMessage = "Cadastro realizado com sucesso! Faça login para continuar.";
+                    document.getElementById('login-error').innerText = successMessage;
+                    document.getElementById('login-error').classList.remove('hidden');
+                    document.getElementById('login-error').classList.remove('bg-red-50');
+                    document.getElementById('login-error').classList.add('bg-green-50');
+                    
+                    toggleMode(); 
+                    
+                    document.getElementById('register-form').reset();
                 } else {
                     let errorMessage = 'Erro ao cadastrar. ';
                     if (data.errors) {
