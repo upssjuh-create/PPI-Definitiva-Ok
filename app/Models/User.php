@@ -14,23 +14,23 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-    
+
         // Tipo do usuário (student, server, external)
         'user_type',
-    
+
         // Dados do aluno
         'registration_number',
         'course',
         'semester',
-    
+
         // Dados do servidor
         'server_code',
         'sector',
-    
+
         // Dados do usuário externo
         'external_school',
         'external_course',
-    
+
         // Outros
         'phone',
     ];
@@ -64,16 +64,16 @@ class User extends Authenticatable
     // Helpers
     public function isAluno()
     {
-        return $this->type === 'aluno';
+        return $this->user_type === 'student';
     }
 
     public function isServidor()
     {
-        return $this->type === 'servidor';
+        return $this->user_type === 'server';
     }
 
     public function isExterno()
     {
-        return $this->type === 'externo';
+        return $this->user_type === 'external';
     }
 }
