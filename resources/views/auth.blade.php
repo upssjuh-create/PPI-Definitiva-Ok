@@ -258,8 +258,8 @@
                             </label>
 
                             <select 
-                                id="register-type" 
-                                name="type" 
+                                id="register-user-type" 
+                                name="user_type" 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
                                 onchange="updateFields()"
                                 required
@@ -539,7 +539,7 @@
             errorDiv.textContent = '';
         
             // Pega o tipo de usuário selecionado
-            const userType = document.getElementById('register-type').value;
+            const userType = document.getElementById('register-user-type').value;
         
             const formData = {
                 name: document.getElementById('register-name').value,
@@ -630,7 +630,7 @@
         }
 
         function updateFields() {
-            const tipo = document.getElementById("register-type").value;
+            const userType = document.getElementById("register-user-type").value;
         
             document.getElementById("aluno-fields").style.display = (tipo === "aluno") ? "block" : "none";
             document.getElementById("servidor-fields").style.display = (tipo === "servidor") ? "block" : "none";
