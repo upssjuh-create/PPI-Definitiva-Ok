@@ -265,9 +265,9 @@
                                 required
                             >
                                 <option value="" disabled selected>Selecione...</option>
-                                <option value="aluno">Aluno</option>
-                                <option value="servidor">Servidor IFFAR</option>
-                                <option value="externo">Externo</option>
+                                <option value="student">Aluno</option>
+                                <option value="server">Servidor IFFAR</option>
+                                <option value="external">Externo</option>
                             </select>
                         </div>
 
