@@ -538,35 +538,35 @@
             errorDiv.classList.add('hidden');
             errorDiv.textContent = '';
         
-            // Qual tipo foi selecionado?
-            const userType = document.querySelector('input[name="user_type"]:checked').value;
+            // Pega o tipo de usuário selecionado
+            const userType = document.getElementById('register-type').value;
         
             const formData = {
                 name: document.getElementById('register-name').value,
                 email: document.getElementById('register-email').value,
                 password: document.getElementById('register-password').value,
                 password_confirmation: document.getElementById('register-password-confirm').value,
-                type: userType,  // <-- agora corretamente usando o campo do backend
-        
-                // comum
+                user_type: userType,   // <-- CORRETO AGORA
                 phone: document.getElementById('register-phone')?.value || null,
             };
         
-            // Campos específicos por tipo
+            // Aluno
             if (userType === 'student') {
                 formData.registration_number = document.getElementById('register-registration').value;
                 formData.course = document.getElementById('register-course').value;
                 formData.semester = parseInt(document.getElementById('register-semester').value);
             }
         
+            // Servidor
             if (userType === 'server') {
+                formData.server_code = document.getElementById('register-code').value;
                 formData.sector = document.getElementById('register-sector').value;
-                formData.verification_code = document.getElementById('register-verification').value;
             }
         
+            // Externo
             if (userType === 'external') {
-                formData.external_school = document.getElementById('register-external-school').value;
-                formData.external_course = document.getElementById('register-external-course').value;
+                formData.external_school = document.getElementById('register-school').value;
+                formData.external_course = document.getElementById('register-ext-course').value;
             }
         
             // Validar senhas
