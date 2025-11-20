@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -29,7 +30,7 @@ class AuthController extends Controller
             'semester' => 'required_if:user_type,student|nullable|integer',
     
             // Campos do servidor
-            'server_code' => 'required_if:user_type,server|nullable|string|max:50',
+            'server_code' => ['required_if:user_type,server','nullable','string','max:50','in:' . env('SERVER_CODE_SECRETO') ],
             'sector' => 'required_if:user_type,server|nullable|string|max:255',
     
             // Campos do externo
