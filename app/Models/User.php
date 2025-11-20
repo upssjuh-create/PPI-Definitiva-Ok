@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->user_type === 'external';
     }
+
+    public function isAdmin()
+    {
+        return $this->user_type === 'admin' || $this->user_type === 'server';
+    }
 }
