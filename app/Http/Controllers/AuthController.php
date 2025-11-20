@@ -21,7 +21,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
     
             // student / server / external
-            'type' => 'required|in:student,server,external',
+            'user_type' => 'required|in:student,server,external',
     
             // Campos do aluno
             'registration_number' => 'required_if:type,student|nullable|string|max:50',
