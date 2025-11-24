@@ -17,6 +17,10 @@ class Payment extends Model
         'transaction_id',
         'payment_data',
         'paid_at',
+        'mercadopago_payment_id',
+        'pix_txid',
+        'pix_payload',
+        'pix_qr_code',
     ];
 
     protected $casts = [

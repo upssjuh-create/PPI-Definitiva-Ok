@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\Models\Registration;
 use App\Models\Payment;
+use App\Models\Cancellation;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -18,13 +19,34 @@ class AdminController extends Controller
             'total_events' => Event::count(),
             'active_events' => Event::where('is_active', true)->where('is_completed', false)->count(),
             'completed_events' => Event::where('is_completed', true)->count(),
-            'total_users' => User::where('user_type', 'student')->count(),
+            'total_users' => User::whereIn('user_type', ['aluno', 'servidor_iffar', 'externo'])->count(),
             'total_registrations' => Registration::where('status', 'confirmed')->count(),
             'total_revenue' => Payment::where('status', 'paid')->sum('amount'),
-            'pending_payments' => Payment::where('status', 'pending')->count(),
+            'paid_events' => Event::where('price', '>', 0)->count(),
         ];
 
-        return response()->json($stats);
+        $recent_events = Event::withCount('registrations')
+                             ->orderBy('created_at', 'desc')
+                             ->limit(5)
+                             ->get();
+
+        return response()->json([
+            'stats' => $stats,
+            'recent_events' => $recent_events
+        ]);
+    }
+
+    // Buscar inscrições de um evento
+    public function getEventRegistrations($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+        
+        $registrations = Registration::where('event_id', $eventId)
+            ->where('status', '!=', 'cancelled')
+            ->with(['user', 'payment', 'certificate'])
+            ->get();
+
+        return response()->json($registrations);
     }
 
     // Detalhes de evento concluído para admin
@@ -134,5 +156,48 @@ class AdminController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    // Listar cancelamentos
+    public function cancellations()
+    {
+        $cancellations = Cancellation::with(['user', 'event', 'registration'])
+                                    ->orderBy('created_at', 'desc')
+                                    ->get();
+
+        return response()->json($cancellations);
+    }
+
+    // Aprovar cancelamento
+    public function approveCancellation($cancellationId)
+    {
+        $cancellation = Cancellation::findOrFail($cancellationId);
+        
+        // Atualizar status do cancelamento
+        $cancellation->update(['status' => 'approved']);
+
+        // Cancelar a inscrição
+        $registration = Registration::find($cancellation->registration_id);
+        if ($registration) {
+            $registration->update(['status' => 'cancelled']);
+        }
+
+        return response()->json([
+            'message' => 'Cancelamento aprovado com sucesso',
+            'cancellation' => $cancellation
+        ]);
+    }
+
+    // Rejeitar cancelamento
+    public function rejectCancellation($cancellationId)
+    {
+        $cancellation = Cancellation::findOrFail($cancellationId);
+        
+        $cancellation->update(['status' => 'rejected']);
+
+        return response()->json([
+            'message' => 'Cancelamento rejeitado',
+            'cancellation' => $cancellation
+        ]);
     }
 }

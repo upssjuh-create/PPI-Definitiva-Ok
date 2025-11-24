@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/CertificateController.php
 
 namespace App\Http\Controllers;
 
@@ -11,131 +10,177 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class CertificateController extends Controller
 {
-    // Gerar certificado
-    public function generate($registrationId)
+    /**
+     * Gerar certificado para uma inscrição
+     */
+    public function generate(Request $request, $registrationId)
     {
         $user = Auth::user();
-
+        
         $registration = Registration::where('id', $registrationId)
-                                   ->where('user_id', $user->id)
-                                   ->with(['event', 'user'])
-                                   ->firstOrFail();
-
-        // Verificar se fez check-in
+            ->where('user_id', $user->id)
+            ->with(['event', 'certificate'])
+            ->firstOrFail();
+        
+        // Verificar se já fez check-in
         if (!$registration->checked_in) {
             return response()->json([
-                'message' => 'Você precisa fazer check-in no evento para gerar o certificado'
+                'message' => 'Você precisa fazer check-in no evento antes de gerar o certificado'
             ], 400);
         }
-
-        // Verificar se o evento foi concluído
-        if (!$registration->event->is_completed) {
-            return response()->json([
-                'message' => 'O evento ainda não foi concluído'
-            ], 400);
-        }
-
+        
         // Verificar se já existe certificado
-        $certificate = Certificate::where('registration_id', $registrationId)->first();
-
-        if ($certificate) {
+        if ($registration->certificate) {
             return response()->json([
                 'message' => 'Certificado já foi gerado',
-                'certificate' => $certificate,
+                'certificate' => $registration->certificate
             ]);
         }
-
+        
         // Criar certificado
         $certificate = Certificate::create([
             'user_id' => $user->id,
             'event_id' => $registration->event_id,
             'registration_id' => $registration->id,
         ]);
-
-        // Gerar PDF
-        $this->generatePDF($certificate);
-
+        
         return response()->json([
             'message' => 'Certificado gerado com sucesso',
-            'certificate' => $certificate,
+            'certificate' => $certificate
         ], 201);
     }
-
-    // Gerar PDF do certificado
-    private function generatePDF($certificate)
+    
+    /**
+     * Listar certificados do usuário
+     */
+    public function index(Request $request)
     {
-        $certificate->load(['user', 'event']);
-
-        $pdf = Pdf::loadView('certificates.template', [
-            'certificate' => $certificate,
-            'user' => $certificate->user,
-            'event' => $certificate->event,
-        ]);
-
-        $filename = "certificate_{$certificate->id}.pdf";
-        $path = "certificates/{$filename}";
-
-        // Salvar PDF
-        $pdf->save(storage_path("app/public/{$path}"));
-
-        // Atualizar caminho no banco
-        $certificate->update(['pdf_path' => $path]);
+        $user = Auth::user();
+        
+        $certificates = Certificate::where('user_id', $user->id)
+            ->with(['event', 'registration'])
+            ->orderBy('issued_at', 'desc')
+            ->get();
+        
+        return response()->json($certificates);
     }
-
-    // Download do certificado
-    public function download($certificateId)
+    
+    /**
+     * Detalhes de um certificado
+     */
+    public function show($id)
     {
-        $certificate = Certificate::where('id', $certificateId)
-                                 ->where('user_id', Auth::id())
-                                 ->firstOrFail();
-
-        $path = storage_path("app/public/{$certificate->pdf_path}");
-
-        if (!file_exists($path)) {
-            return response()->json(['message' => 'Arquivo não encontrado'], 404);
+        // Buscar certificado com assinaturas
+        $certificate = Certificate::where('id', $id)
+            ->with(['event.signature1', 'event.signature2', 'registration', 'user'])
+            ->firstOrFail();
+        
+        // Se for requisição API, verificar autenticação
+        if (request()->expectsJson()) {
+            $user = Auth::user();
+            
+            // Verificar se o certificado pertence ao usuário autenticado
+            if (!$user || $certificate->user_id !== $user->id) {
+                return response()->json([
+                    'message' => 'Não autorizado'
+                ], 403);
+            }
+            
+            // Adicionar informações formatadas
+            $certificate->formatted_date = $certificate->event->date->format('d/m/Y');
+            $certificate->formatted_issued_at = $certificate->issued_at->format('d/m/Y');
+            
+            return response()->json($certificate);
         }
-
-        return response()->download($path);
+        
+        // Para requisições web, permitir visualização (certificado é público)
+        // Formatar data em português para a view
+        $meses = [
+            1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
+            5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+            9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+        ];
+        
+        $dia = $certificate->event->date->format('d');
+        $mes = $meses[(int)$certificate->event->date->format('m')];
+        $ano = $certificate->event->date->format('Y');
+        $dataFormatada = "$dia de $mes de $ano";
+        
+        // Se for requisição web, retornar view
+        return view('certificate', compact('certificate', 'dataFormatada'));
     }
-
-    // Validar certificado (público)
+    
+    /**
+     * Download do certificado (PDF)
+     */
+    public function download($id)
+    {
+        // Buscar certificado com assinaturas (permitir acesso público)
+        $certificate = Certificate::where('id', $id)
+            ->with(['event.signature1', 'event.signature2', 'user'])
+            ->firstOrFail();
+        
+        // Debug: Verificar se as assinaturas foram carregadas
+        \Log::info('=== CERTIFICADO DEBUG ===', [
+            'event_id' => $certificate->event_id,
+            'signature1_id' => $certificate->event->signature1_id,
+            'signature2_id' => $certificate->event->signature2_id,
+            'signature1_loaded' => $certificate->event->signature1 ? true : false,
+            'signature2_loaded' => $certificate->event->signature2 ? true : false,
+            'signature1_path' => $certificate->event->signature1 ? $certificate->event->signature1->image_path : null,
+            'signature2_path' => $certificate->event->signature2 ? $certificate->event->signature2->image_path : null,
+        ]);
+        
+        // Incrementar contador de validação
+        $certificate->incrementValidation();
+        
+        // Formatar data em português
+        $meses = [
+            1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
+            5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+            9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+        ];
+        
+        $dia = $certificate->event->date->format('d');
+        $mes = $meses[(int)$certificate->event->date->format('m')];
+        $ano = $certificate->event->date->format('Y');
+        $dataFormatada = "$dia de $mes de $ano";
+        
+        // Configurar PDF com orientação paisagem ANTES de carregar a view
+        $pdf = Pdf::setOption('isHtml5ParserEnabled', true)
+                  ->setOption('isRemoteEnabled', true)
+                  ->setPaper([0, 0, 841.89, 595.28], 'landscape') // A4 paisagem em pontos
+                  ->loadView('certificate-pdf', compact('certificate', 'dataFormatada'));
+        
+        // Nome do arquivo
+        $fileName = 'Certificado_' . str_replace(' ', '_', $certificate->user->name) . '_' . $certificate->certificate_code . '.pdf';
+        
+        // Retornar PDF para download
+        return $pdf->download($fileName);
+    }
+    
+    /**
+     * Validar certificado por código
+     */
     public function validate($code)
     {
-        $certificate = Certificate::where('certificate_code', $code)
-                                 ->with(['user', 'event'])
-                                 ->first();
-
+        $certificate = Certificate::where('certificate_code', strtoupper($code))
+            ->with(['event', 'user'])
+            ->first();
+        
         if (!$certificate) {
             return response()->json([
                 'valid' => false,
                 'message' => 'Certificado não encontrado'
             ], 404);
         }
-
-        // Incrementar contador de validações
+        
+        // Incrementar contador de validação
         $certificate->incrementValidation();
-
+        
         return response()->json([
             'valid' => true,
-            'certificate' => [
-                'code' => $certificate->certificate_code,
-                'student_name' => $certificate->user->name,
-                'event_title' => $certificate->event->title,
-                'event_date' => $certificate->event->date,
-                'issued_at' => $certificate->issued_at,
-                'hours' => $certificate->event->certificate_hours,
-            ]
+            'certificate' => $certificate
         ]);
-    }
-
-    // Meus certificados
-    public function myCertificates()
-    {
-        $certificates = Certificate::where('user_id', Auth::id())
-                                  ->with(['event'])
-                                  ->orderBy('issued_at', 'desc')
-                                  ->get();
-
-        return response()->json($certificates);
     }
 }

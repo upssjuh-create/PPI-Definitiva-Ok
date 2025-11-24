@@ -71,6 +71,21 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
+        
+        #aluno-fields, #servidor-fields, #externo-fields {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -167,6 +182,16 @@
 
                         <!-- Mensagem de erro -->
                         <div id="login-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+                        
+                        <!-- Observações de Teste -->
+                        <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p class="text-xs font-bold text-blue-900 mb-2">📝 USUÁRIOS DE TESTE:</p>
+                            <div class="text-xs text-blue-800 space-y-1">
+                                <p><strong>Admin:</strong> admin@iffar.edu.br | Senha: admin123</p>
+                                <p><strong>Aluno IFFar:</strong> juliasoaresportela@gmail.com | Senha: teste1234</p>
+                                <p><strong>Externo:</strong> julia.portela.testes@gmail.com | Senha: teste123</p>
+                            </div>
+                        </div>
                     </form>
 
                     <!-- Separador -->
@@ -190,13 +215,10 @@
                         <span class="text-gray-700 font-medium">Google</span>
                     </button>
 
-                    <!-- Link Administrador -->
+                    <!-- Link para cadastro -->
                     <div class="text-center">
-                        <a href="#" onclick="showAdminLogin(); return false;" class="text-sm text-gray-600 hover:text-[#1a5f3f] transition flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                            <span>Acessar como Administrador</span>
+                        <a href="#" onclick="toggleMode(); return false;" class="text-sm text-gray-600 hover:text-[#1a5f3f] transition">
+                            Não tem uma conta? <span class="font-semibold">Cadastre-se</span>
                         </a>
                     </div>
                 </div>
@@ -206,6 +228,25 @@
                     <h2 class="text-3xl font-bold text-gray-900 mb-8">Cadastrar</h2>
                     
                     <form id="register-form" onsubmit="handleRegister(event); return false;">
+                        <!-- Tipo de Usuário -->
+                        <div class="mb-4">
+                            <label for="register-user-type" class="block text-sm font-medium text-gray-700 mb-2">
+                                Tipo de Usuário
+                            </label>
+                            <select 
+                                id="register-user-type" 
+                                name="user_type" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                required
+                                onchange="handleUserTypeChange()"
+                            >
+                                <option value="">Selecione...</option>
+                                <option value="aluno">Aluno</option>
+                                <option value="servidor_iffar">Servidor IFFAR</option>
+                                <option value="externo">Externo</option>
+                            </select>
+                        </div>
+
                         <!-- Nome -->
                         <div class="mb-4">
                             <label for="register-name" class="block text-sm font-medium text-gray-700 mb-2">
@@ -238,48 +279,98 @@
 
                         <!-- CPF -->
                         <div class="mb-4">
-                            <label for="register-registration" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="register-cpf" class="block text-sm font-medium text-gray-700 mb-2">
                                 CPF
                             </label>
                             <input 
                                 type="text" 
-                                id="register-registration" 
-                                name="registration_number" 
-                                placeholder="Sua matrícula"
+                                id="register-cpf" 
+                                name="cpf" 
+                                placeholder="000.000.000-00"
+                                maxlength="11"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
                                 required
                             >
                         </div>
 
-                        <!-- Curso -->
-                        <div class="mb-4">
-                            <label for="register-course" class="block text-sm font-medium text-gray-700 mb-2">
-                                Curso (não obrigatório)
-                            </label>
-                            <input 
-                                type="text" 
-                                id="register-course" 
-                                name="course" 
-                                placeholder="Seu curso"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
-                                required
-                            >
+                        <!-- Campos específicos para Aluno -->
+                        <div id="aluno-fields" style="display: none;">
+                            <!-- Matrícula -->
+                            <div class="mb-4">
+                                <label for="register-registration" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Matrícula <span class="text-gray-500 font-normal">(opcional)</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-registration" 
+                                    name="registration_number" 
+                                    placeholder="Sua matrícula"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                >
+                            </div>
+
+                            <!-- Curso -->
+                            <div class="mb-4">
+                                <label for="register-course" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Curso <span class="text-gray-500 font-normal">(opcional)</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-course" 
+                                    name="course" 
+                                    placeholder="Seu curso"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                >
+                            </div>
+
+                            <!-- Semestre -->
+                            <div class="mb-4">
+                                <label for="register-semester" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Semestre <span class="text-gray-500 font-normal">(opcional)</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="register-semester" 
+                                    name="semester" 
+                                    placeholder="Seu semestre"
+                                    min="1"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                >
+                            </div>
                         </div>
 
-                        <!-- Semestre -->
-                        <div class="mb-4">
-                            <label for="register-semester" class="block text-sm font-medium text-gray-700 mb-2">
-                                Semestre (não obrigatório)
-                            </label>
-                            <input 
-                                type="number" 
-                                id="register-semester" 
-                                name="semester" 
-                                placeholder="Seu semestre"
-                                min="1"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
-                                required
-                            >
+                        <!-- Campos específicos para Servidor IFFAR -->
+                        <div id="servidor-fields" style="display: none;">
+                            <!-- Departamento -->
+                            <div class="mb-4">
+                                <label for="register-department" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Departamento
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-department" 
+                                    name="department" 
+                                    placeholder="Seu departamento"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Campos específicos para Externo -->
+                        <div id="externo-fields" style="display: none;">
+                            <!-- Instituição -->
+                            <div class="mb-4">
+                                <label for="register-institution" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Instituição
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="register-institution" 
+                                    name="institution" 
+                                    placeholder="Sua instituição"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
+                                >
+                            </div>
                         </div>
 
                         <!-- Senha -->
@@ -430,7 +521,7 @@
                     if (data.user.user_type === 'admin') {
                         window.location.href = '/admin/dashboard';
                     } else {
-                        window.location.href = '/';
+                        window.location.href = '/events';
                     }
                 } else {
                     // Mostrar erro
@@ -449,6 +540,38 @@
             }
         }
 
+        // Função para mostrar/ocultar campos baseado no tipo de usuário
+        function handleUserTypeChange() {
+            const userType = document.getElementById('register-user-type').value;
+            const alunoFields = document.getElementById('aluno-fields');
+            const servidorFields = document.getElementById('servidor-fields');
+            const externoFields = document.getElementById('externo-fields');
+
+            // Ocultar todos os campos
+            alunoFields.style.display = 'none';
+            servidorFields.style.display = 'none';
+            externoFields.style.display = 'none';
+
+            // Remover required de todos os campos específicos
+            document.getElementById('register-registration').removeAttribute('required');
+            document.getElementById('register-course').removeAttribute('required');
+            document.getElementById('register-semester').removeAttribute('required');
+            document.getElementById('register-department').removeAttribute('required');
+            document.getElementById('register-institution').removeAttribute('required');
+
+            // Mostrar campos específicos e adicionar required apenas onde necessário
+            if (userType === 'aluno') {
+                alunoFields.style.display = 'block';
+                // Matrícula e semestre são opcionais para alunos
+            } else if (userType === 'servidor_iffar') {
+                servidorFields.style.display = 'block';
+                document.getElementById('register-department').setAttribute('required', 'required');
+            } else if (userType === 'externo') {
+                externoFields.style.display = 'block';
+                document.getElementById('register-institution').setAttribute('required', 'required');
+            }
+        }
+
         // Cadastro
         async function handleRegister(event) {
             event.preventDefault();
@@ -456,16 +579,34 @@
             errorDiv.classList.add('hidden');
             errorDiv.textContent = '';
 
+            const userType = document.getElementById('register-user-type').value;
+
+            // Validar tipo de usuário
+            if (!userType) {
+                errorDiv.textContent = 'Por favor, selecione o tipo de usuário.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
             const formData = {
                 name: document.getElementById('register-name').value,
                 email: document.getElementById('register-email').value,
                 password: document.getElementById('register-password').value,
                 password_confirmation: document.getElementById('register-password-confirm').value,
-                user_type: 'student',
-                registration_number: document.getElementById('register-registration').value,
-                course: document.getElementById('register-course').value,
-                semester: parseInt(document.getElementById('register-semester').value),
+                user_type: userType,
+                cpf: document.getElementById('register-cpf').value,
             };
+
+            // Adicionar campos específicos baseado no tipo
+            if (userType === 'aluno') {
+                formData.registration_number = document.getElementById('register-registration').value;
+                formData.course = document.getElementById('register-course').value;
+                formData.semester = parseInt(document.getElementById('register-semester').value);
+            } else if (userType === 'servidor_iffar') {
+                formData.department = document.getElementById('register-department').value;
+            } else if (userType === 'externo') {
+                formData.institution = document.getElementById('register-institution').value;
+            }
 
             // Validar senhas
             if (formData.password !== formData.password_confirmation) {

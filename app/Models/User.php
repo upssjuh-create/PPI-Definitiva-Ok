@@ -20,6 +20,12 @@ class User extends Authenticatable
         'course',
         'semester',
         'phone',
+        'matricula',
+        'curso',
+        'semestre',
+        'telefone',
+        'cpf',
+        'institution',
     ];
 
     protected $hidden = [

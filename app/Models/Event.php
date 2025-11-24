@@ -22,16 +22,16 @@ class Event extends Model
         'tags',
         'is_completed',
         'is_active',
-        'payment_config',
         'certificate_hours',
         'certificate_description',
+        'signature1_id',
+        'signature2_id',
     ];
 
     protected $casts = [
         'date' => 'date',
         'speakers' => 'array',
         'tags' => 'array',
-        'payment_config' => 'array',
         'is_completed' => 'boolean',
         'is_active' => 'boolean',
         'price' => 'decimal:2',
@@ -53,7 +53,31 @@ class Event extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
+
+    public function signature1()
+    {
+        return $this->belongsTo(Signature::class, 'signature1_id');
+    }
+
+    public function signature2()
+    {
+        return $this->belongsTo(Signature::class, 'signature2_id');
+    }
+
     // Helpers
+    public function isPast()
+    {
+        return $this->date->isPast();
+    }
+
+    public function canEdit()
+    {
+        return !$this->isPast();
+    }
     public function isFree()
     {
         return $this->price == 0;
@@ -61,7 +85,7 @@ class Event extends Model
 
     public function hasAvailableSpots()
     {
-        return $this->registrations()->count() < $this->capacity;
+        return $this->registrations()->where('status', 'confirmed')->count() < $this->capacity;
     }
 
     public function registeredCount()

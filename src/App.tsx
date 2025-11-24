@@ -122,7 +122,7 @@ export const sampleEvents: Event[] = [
       acceptsPix: true,
       pixKey: 'workshop@iffar.edu.br',
       pixKeyType: 'email',
-      pixName: 'IFFar - Campus Santa Rosa',
+      pixName: 'IFFar - Campus Panambi',
       acceptsCard: true,
       cardAccountName: 'IFFar - Instituto Federal Farroupilha',
       cardAccountBank: 'Banco do Brasil',

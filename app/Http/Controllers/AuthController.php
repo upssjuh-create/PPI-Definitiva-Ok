@@ -18,11 +18,20 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'user_type' => 'required|in:student,admin',
-            'registration_number' => 'required_if:user_type,student|unique:users',
-            'course' => 'required_if:user_type,student|string',
-            'semester' => 'required_if:user_type,student|integer',
+            'user_type' => 'required|in:aluno,servidor_iffar,externo,admin',
+            'cpf' => 'required|string|unique:users|size:11',
             'phone' => 'nullable|string',
+            
+            // Campos específicos para aluno (todos opcionais)
+            'registration_number' => 'nullable|string|unique:users',
+            'course' => 'nullable|string',
+            'semester' => 'nullable|integer',
+            
+            // Campos específicos para servidor IFFAR
+            'department' => 'required_if:user_type,servidor_iffar|nullable|string',
+            
+            // Campos específicos para externo
+            'institution' => 'required_if:user_type,externo|nullable|string',
         ]);
 
         $user = User::create([
@@ -30,10 +39,13 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'user_type' => $validated['user_type'],
+            'cpf' => $validated['cpf'],
+            'phone' => $validated['phone'] ?? null,
             'registration_number' => $validated['registration_number'] ?? null,
             'course' => $validated['course'] ?? null,
             'semester' => $validated['semester'] ?? null,
-            'phone' => $validated['phone'] ?? null,
+            'department' => $validated['department'] ?? null,
+            'institution' => $validated['institution'] ?? null,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

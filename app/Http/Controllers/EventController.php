@@ -31,11 +31,30 @@ class EventController extends Controller
             });
         }
 
-        $events = $query->withCount('registrations')
-                       ->orderBy('date', 'desc')
+        $events = $query->orderBy('date', 'desc')
                        ->get()
                        ->map(function($event) {
-                           $event->registered = $event->registrations_count;
+                           // Contar apenas inscrições confirmadas
+                           $event->registered_count = $event->registrations()
+                               ->where('status', 'confirmed')
+                               ->count();
+                           
+                           // Verificar se o usuário está inscrito
+                           $event->is_user_registered = false;
+                           $event->user_registration = null;
+                           if (auth()->check()) {
+                               $registration = $event->registrations()
+                                   ->where('user_id', auth()->id())
+                                   ->where('status', '!=', 'cancelled')
+                                   ->with(['payment'])
+                                   ->first();
+                               
+                               if ($registration) {
+                                   $event->is_user_registered = true;
+                                   $event->user_registration = $registration;
+                               }
+                           }
+                           
                            return $event;
                        });
 
@@ -43,13 +62,46 @@ class EventController extends Controller
     }
 
     // Detalhes de um evento
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $event = Event::with(['registrations.user'])
-                     ->withCount('registrations')
-                     ->findOrFail($id);
-
-        $event->registered = $event->registrations_count;
+        $event = Event::findOrFail($id);
+        
+        // Verificar se o usuário está inscrito
+        $event->is_user_registered = false;
+        $event->user_registration = null;
+        
+        // Tentar obter o usuário autenticado via Sanctum
+        $user = $request->user();
+        
+        \Log::info('=== EVENT SHOW DEBUG ===', [
+            'event_id' => $id,
+            'user_authenticated' => $user ? true : false,
+            'user_id' => $user ? $user->id : null,
+            'user_email' => $user ? $user->email : null,
+        ]);
+        
+        if ($user) {
+            // Buscar qualquer inscrição que não seja cancelada
+            $registration = $event->registrations()
+                ->where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->with(['payment', 'user'])
+                ->first();
+            
+            \Log::info('Registration found:', [
+                'registration' => $registration ? $registration->toArray() : null
+            ]);
+            
+            if ($registration) {
+                $event->is_user_registered = true;
+                $event->user_registration = $registration;
+            }
+        }
+        
+        // Adicionar contagem de inscritos confirmados
+        $event->registered_count = $event->registrations()
+            ->where('status', 'confirmed')
+            ->count();
 
         return response()->json($event);
     }
@@ -70,7 +122,6 @@ class EventController extends Controller
             'image' => 'nullable|image|max:2048',
             'speakers' => 'nullable|array',
             'tags' => 'nullable|array',
-            'payment_config' => 'nullable|array',
             'certificate_hours' => 'nullable|integer',
             'certificate_description' => 'nullable|string',
         ]);
@@ -104,7 +155,6 @@ class EventController extends Controller
             'image' => 'nullable|image|max:2048',
             'speakers' => 'nullable|array',
             'tags' => 'nullable|array',
-            'payment_config' => 'nullable|array',
             'is_completed' => 'sometimes|boolean',
             'certificate_hours' => 'nullable|integer',
             'certificate_description' => 'nullable|string',
