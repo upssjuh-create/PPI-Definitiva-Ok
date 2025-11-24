@@ -1,5 +1,4 @@
 <?php
-// app/Models/User.php
 
 namespace App\Models;
 
@@ -15,10 +14,24 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+
+        // Tipo do usuário (student, server, external)
         'user_type',
+
+        // Dados do aluno
         'registration_number',
         'course',
         'semester',
+
+        // Dados do servidor
+        'server_code',
+        'sector',
+
+        // Dados do usuário externo
+        'external_school',
+        'external_course',
+
+        // Outros
         'phone',
         'matricula',
         'curso',
@@ -55,13 +68,23 @@ class User extends Authenticatable
     }
 
     // Helpers
-    public function isAdmin()
-    {
-        return $this->user_type === 'admin';
-    }
-
-    public function isStudent()
+    public function isAluno()
     {
         return $this->user_type === 'student';
+    }
+
+    public function isServidor()
+    {
+        return $this->user_type === 'server';
+    }
+
+    public function isExterno()
+    {
+        return $this->user_type === 'external';
+    }
+
+    public function isAdmin()
+    {
+        return $this->user_type === 'admin' || $this->user_type === 'server';
     }
 }
