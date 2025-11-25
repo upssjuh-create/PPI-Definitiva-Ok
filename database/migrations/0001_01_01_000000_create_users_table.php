@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
 
-            // Tipo de usuário: student | server | external
-            $table->enum('user_type', ['student', 'server', 'external'])
+            // Tipo de usuário: student | server | external | admin
+            $table->enum('user_type', ['student', 'server', 'external', 'admin'])
                   ->default('student');
 
             // --- Dados do aluno ---
@@ -32,8 +32,9 @@ return new class extends Migration
             $table->string('external_school')->nullable();
             $table->string('external_course')->nullable();
 
-            // Telefone (opcional)
+            // Telefone e CPF (opcional)
             $table->string('phone')->nullable();
+            $table->string('cpf')->nullable();
 
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

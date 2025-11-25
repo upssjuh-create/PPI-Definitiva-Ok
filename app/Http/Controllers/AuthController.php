@@ -20,25 +20,9 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-<<<<<<< HEAD
-            'user_type' => 'required|in:aluno,servidor_iffar,externo,admin',
-            'cpf' => 'required|string|unique:users|size:11',
-            'phone' => 'nullable|string',
-            
-            // Campos específicos para aluno (todos opcionais)
-            'registration_number' => 'nullable|string|unique:users',
-            'course' => 'nullable|string',
-            'semester' => 'nullable|integer',
-            
-            // Campos específicos para servidor IFFAR
-            'department' => 'required_if:user_type,servidor_iffar|nullable|string',
-            
-            // Campos específicos para externo
-            'institution' => 'required_if:user_type,externo|nullable|string',
-=======
     
-            // student / server / external
-            'user_type' => 'required|in:student,server,external',
+            // student / server / external / admin
+            'user_type' => 'required|in:student,server,external,admin',
     
             // Campos do aluno
             'registration_number' => 'required_if:user_type,student|nullable|string|max:50',
@@ -46,15 +30,15 @@ class AuthController extends Controller
             'semester' => 'required_if:user_type,student|nullable|integer',
     
             // Campos do servidor
-            'server_code' => ['required_if:user_type,server','nullable','string','max:50','in:' . env('SERVER_CODE_SECRETO') ],
+            'server_code' => 'required_if:user_type,server|nullable|string|max:50',
             'sector' => 'required_if:user_type,server|nullable|string|max:255',
     
             // Campos do externo
             'external_school' => 'required_if:user_type,external|nullable|string|max:255',
             'external_course' => 'required_if:user_type,external|nullable|string|max:255',
     
-            'phone' => 'nullable|string|max:20'
->>>>>>> daee4a14bc98567d00e4f14d4f62ade5f371d630
+            'phone' => 'nullable|string|max:20',
+            'cpf' => 'nullable|string|max:14',
         ]);
     
         // Criação do usuário
@@ -64,15 +48,6 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
     
             'user_type' => $validated['user_type'],
-<<<<<<< HEAD
-            'cpf' => $validated['cpf'],
-            'phone' => $validated['phone'] ?? null,
-            'registration_number' => $validated['registration_number'] ?? null,
-            'course' => $validated['course'] ?? null,
-            'semester' => $validated['semester'] ?? null,
-            'department' => $validated['department'] ?? null,
-            'institution' => $validated['institution'] ?? null,
-=======
     
             // Aluno
             'registration_number' => $validated['registration_number'] ?? null,
@@ -88,7 +63,7 @@ class AuthController extends Controller
             'external_course' => $validated['external_course'] ?? null,
     
             'phone' => $validated['phone'] ?? null,
->>>>>>> daee4a14bc98567d00e4f14d4f62ade5f371d630
+            'cpf' => $validated['cpf'] ?? null,
         ]);
     
         // Token

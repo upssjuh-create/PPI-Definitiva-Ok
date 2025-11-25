@@ -184,9 +184,9 @@
                             <label for="register-user-type" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Usuário</label>
                             <select id="register-user-type" name="user_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field" required onchange="handleUserTypeChange()">
                                 <option value="">Selecione...</option>
-                                <option value="aluno">Aluno</option>
-                                <option value="servidor_iffar">Servidor IFFAR</option>
-                                <option value="externo">Externo</option>
+                                <option value="student">Aluno</option>
+                                <option value="server">Servidor IFFAR</option>
+                                <option value="external">Externo</option>
                             </select>
                         </div>
 
@@ -399,12 +399,12 @@
             document.getElementById('register-department').removeAttribute('required');
             document.getElementById('register-institution').removeAttribute('required');
 
-            if (userType === 'aluno') {
+            if (userType === 'student') {
                 alunoFields.style.display = 'block';
-            } else if (userType === 'servidor_iffar') {
+            } else if (userType === 'server') {
                 servidorFields.style.display = 'block';
                 document.getElementById('register-department').setAttribute('required', 'required');
-            } else if (userType === 'externo') {
+            } else if (userType === 'external') {
                 externoFields.style.display = 'block';
                 document.getElementById('register-institution').setAttribute('required', 'required');
             }
@@ -434,7 +434,7 @@
                 cpf: document.getElementById('register-cpf').value,
             };
 
-            if (userType === 'aluno') {
+            if (userType === 'student') {
                 const registration = document.getElementById('register-registration').value;
                 const course = document.getElementById('register-course').value;
                 const semester = document.getElementById('register-semester').value;
@@ -442,10 +442,10 @@
                 if (registration) formData.registration_number = registration;
                 if (course) formData.course = course;
                 if (semester) formData.semester = parseInt(semester);
-            } else if (userType === 'servidor_iffar') {
-                formData.department = document.getElementById('register-department').value;
-            } else if (userType === 'externo') {
-                formData.institution = document.getElementById('register-institution').value;
+            } else if (userType === 'server') {
+                formData.sector = document.getElementById('register-department').value;
+            } else if (userType === 'external') {
+                formData.external_school = document.getElementById('register-institution').value;
             }
 
             if (formData.password !== formData.password_confirmation) {
