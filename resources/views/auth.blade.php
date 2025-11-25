@@ -185,11 +185,10 @@
                         
                         <!-- Observações de Teste -->
                         <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                            <p class="text-xs font-bold text-blue-900 mb-2">📝 USUÁRIOS DE TESTE:</p>
+                            <p class="text-xs font-bold text-blue-900 mb-2">USUÁRIO DE TESTE:</p>
                             <div class="text-xs text-blue-800 space-y-1">
                                 <p><strong>Admin:</strong> admin@iffar.edu.br | Senha: admin123</p>
-                                <p><strong>Aluno IFFar:</strong> juliasoaresportela@gmail.com | Senha: teste1234</p>
-                                <p><strong>Externo:</strong> julia.portela.testes@gmail.com | Senha: teste123</p>
+                                <p>Para Externo e aluno, basta logar com um e-mail real.</p>
                             </div>
                         </div>
                     </form>
