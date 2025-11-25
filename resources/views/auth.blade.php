@@ -9,19 +9,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'iffar-green': '#1a5f3f',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
         body {
@@ -284,22 +273,15 @@
                             </label>
                             <input 
                                 type="text" 
-<<<<<<< HEAD
                                 id="register-cpf" 
                                 name="cpf" 
                                 placeholder="000.000.000-00"
-                                maxlength="11"
-=======
-                                id="register-registration" 
-                                name="registration_number" 
-                                placeholder="Sua CPF"
->>>>>>> daee4a14bc98567d00e4f14d4f62ade5f371d630
+                                maxlength="14"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
                                 required
                             >
                         </div>
 
-<<<<<<< HEAD
                         <!-- Campos específicos para Aluno -->
                         <div id="aluno-fields" style="display: none;">
                             <!-- Matrícula -->
@@ -376,118 +358,6 @@
                                     name="institution" 
                                     placeholder="Sua instituição"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
-=======
-                        <!-- Tipo de Usuário -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Tipo de Usuário
-                            </label>
-
-                            <select 
-                                id="register-user-type" 
-                                name="user_type" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f]"
-                                onchange="updateFields()"
-                                required
-                            >
-                                <option value="" disabled selected>Selecione...</option>
-                                <option value="student">Aluno</option>
-                                <option value="server">Servidor IFFAR</option>
-                                <option value="external">Externo</option>
-                            </select>
-                        </div>
-
-                        <!-- Campos do ALUNO -->
-                        <div id="aluno-fields" style="display: none;">
-                            <!-- Curso -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Curso
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="register-course" 
-                                    name="course"
-                                    placeholder="Qual seu curso?"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
-                                >
-                            </div>
-                        
-                            <!-- Semestre -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Semestre
-                                </label>
-                                <input 
-                                    type="number" 
-                                    id="register-semester" 
-                                    name="semester"
-                                    placeholder="Qual seu semestre?"
-                                    min="1"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
->>>>>>> daee4a14bc98567d00e4f14d4f62ade5f371d630
-                                >
-                            </div>
-                        </div>
-
-                        <!-- Campos do SERVIDOR -->
-                        <div id="servidor-fields" style="display: none;">
-                            <!-- Código do Servidor -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Código de Verificação
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="register-code" 
-                                    name="server_code"
-                                    placeholder="Informe o código fornecido pelo IFFAR"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
-                                >
-                            </div>
-                        
-                            <!-- Setor -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Setor
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="register-sector" 
-                                    name="sector"
-                                    placeholder="Ex: Biblioteca, TI, Direção..."
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
-                                >
-                            </div>
-                        </div>
-
-                        <!-- Campos do EXTERNO -->
-                        <div id="externo-fields" style="display: none;">
-                            <!-- Escola / Universidade -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Escola / Universidade
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="register-school" 
-                                    name="school"
-                                    placeholder="Instituição de origem"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
-                                >
-                            </div>
-                        
-                            <!-- Curso -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Curso
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="register-ext-course" 
-                                    name="external_course"
-                                    placeholder="Curso"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg input-field"
                                 >
                             </div>
                         </div>
@@ -561,6 +431,7 @@
         </div>
     </div>
 
+
     <script>
         const API_BASE_URL = window.location.origin;
 
@@ -609,6 +480,11 @@
                 password: document.getElementById('login-password').value,
             };
 
+            console.log('=== TENTANDO LOGIN ===');
+            console.log('API_BASE_URL:', API_BASE_URL);
+            console.log('URL completa:', `${API_BASE_URL}/api/login`);
+            console.log('Dados:', formData);
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/login`, {
                     method: 'POST',
@@ -618,6 +494,9 @@
                     },
                     body: JSON.stringify(formData),
                 });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
 
                 // Verificar se a resposta é JSON
                 let data;
@@ -654,6 +533,7 @@
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
+                console.error('Erro no login:', error);
                 errorDiv.textContent = 'Erro ao fazer login. Tente novamente.';
                 errorDiv.classList.remove('hidden');
             }
@@ -681,7 +561,7 @@
             // Mostrar campos específicos e adicionar required apenas onde necessário
             if (userType === 'aluno') {
                 alunoFields.style.display = 'block';
-                // Matrícula e semestre são opcionais para alunos
+                // Matrícula, curso e semestre são opcionais para alunos
             } else if (userType === 'servidor_iffar') {
                 servidorFields.style.display = 'block';
                 document.getElementById('register-department').setAttribute('required', 'required');
@@ -698,7 +578,6 @@
             const errorDiv = document.getElementById('register-error');
             errorDiv.classList.add('hidden');
             errorDiv.textContent = '';
-<<<<<<< HEAD
 
             const userType = document.getElementById('register-user-type').value;
 
@@ -709,58 +588,30 @@
                 return;
             }
 
-=======
-        
-            // Pega o tipo de usuário selecionado
-            const userType = document.getElementById('register-user-type').value;
-        
->>>>>>> daee4a14bc98567d00e4f14d4f62ade5f371d630
             const formData = {
                 name: document.getElementById('register-name').value,
                 email: document.getElementById('register-email').value,
                 password: document.getElementById('register-password').value,
                 password_confirmation: document.getElementById('register-password-confirm').value,
-<<<<<<< HEAD
                 user_type: userType,
                 cpf: document.getElementById('register-cpf').value,
             };
 
             // Adicionar campos específicos baseado no tipo
             if (userType === 'aluno') {
-                formData.registration_number = document.getElementById('register-registration').value;
-                formData.course = document.getElementById('register-course').value;
-                formData.semester = parseInt(document.getElementById('register-semester').value);
+                const registration = document.getElementById('register-registration').value;
+                const course = document.getElementById('register-course').value;
+                const semester = document.getElementById('register-semester').value;
+                
+                if (registration) formData.registration_number = registration;
+                if (course) formData.course = course;
+                if (semester) formData.semester = parseInt(semester);
             } else if (userType === 'servidor_iffar') {
                 formData.department = document.getElementById('register-department').value;
             } else if (userType === 'externo') {
                 formData.institution = document.getElementById('register-institution').value;
             }
 
-=======
-                user_type: userType,   // <-- CORRETO AGORA
-                phone: document.getElementById('register-phone')?.value || null,
-            };
-        
-            // Aluno
-            if (userType === 'student') {
-                formData.registration_number = document.getElementById('register-registration').value;
-                formData.course = document.getElementById('register-course').value;
-                formData.semester = parseInt(document.getElementById('register-semester').value);
-            }
-        
-            // Servidor
-            if (userType === 'server') {
-                formData.server_code = document.getElementById('register-code').value;
-                formData.sector = document.getElementById('register-sector').value;
-            }
-        
-            // Externo
-            if (userType === 'external') {
-                formData.external_school = document.getElementById('register-school').value;
-                formData.external_course = document.getElementById('register-ext-course').value;
-            }
-        
->>>>>>> daee4a14bc98567d00e4f14d4f62ade5f371d630
             // Validar senhas
             if (formData.password !== formData.password_confirmation) {
                 errorDiv.textContent = 'As senhas não coincidem.';
@@ -768,6 +619,9 @@
                 return;
             }
         
+            console.log('=== TENTANDO CADASTRO ===');
+            console.log('Dados:', formData);
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/register`, {
                     method: 'POST',
@@ -790,53 +644,55 @@
                 }
         
                 if (response.ok) {
-                    // Exibe uma mensagem de sucesso
-                    const successMessage = "Cadastro realizado com sucesso! Faça login para continuar.";
-                    document.getElementById('login-error').innerText = successMessage;
-                    document.getElementById('login-error').classList.remove('hidden');
-                    document.getElementById('login-error').classList.remove('bg-red-50');
-                    document.getElementById('login-error').classList.add('bg-green-50');
+                    // Salvar token
+                    localStorage.setItem('auth_token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
                     
-                    toggleMode(); 
-                    
-                    document.getElementById('register-form').reset();
-                } else {
-                    let errorMessage = 'Erro ao cadastrar. ';
-                    if (data.errors) {
-                        errorMessage += Object.values(data.errors).flat().join(', ');
+                    // Redirecionar
+                    if (data.user.user_type === 'admin') {
+                        window.location.href = '/admin/dashboard';
                     } else {
-                        errorMessage += data.message || 'Tente novamente.';
+                        window.location.href = '/events';
+                    }
+                } else {
+                    // Mostrar erros
+                    let errorMessage = 'Erro ao cadastrar. Tente novamente.';
+                    if (data.errors) {
+                        const errors = Object.values(data.errors).flat();
+                        errorMessage = errors.join(' ');
+                    } else if (data.message) {
+                        errorMessage = data.message;
                     }
                     errorDiv.textContent = errorMessage;
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
+                console.error('Erro no cadastro:', error);
                 errorDiv.textContent = 'Erro ao cadastrar. Tente novamente.';
                 errorDiv.classList.remove('hidden');
             }
         }
 
-        // Login Google (placeholder)
+        // Login com Google
         function handleGoogleLogin() {
-            alert('Login com Google será implementado em breve.');
+            window.location.href = `${API_BASE_URL}/auth/google`;
         }
 
-        // Login Administrador
-        function showAdminLogin() {
-            // Por enquanto, apenas alterna para login
-            toggleMode();
-            // Aqui você pode adicionar lógica específica para admin se necessário
-        }
-
-        function updateFields() {
-            const userType = document.getElementById("register-user-type").value;
-        
-            document.getElementById("aluno-fields").style.display = (userType === "student") ? "block" : "none";
-            document.getElementById("servidor-fields").style.display = (userType === "server") ? "block" : "none";
-            document.getElementById("externo-fields").style.display = (userType === "external") ? "block" : "none";
-        }
-
+        // Máscara para CPF
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfInput = document.getElementById('register-cpf');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                        e.target.value = value;
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
-
