@@ -11,11 +11,11 @@ Route::get('/', function () {
 
 // Rotas de autenticação
 Route::get('/login', function () {
-    return view('auth');
+    return view('auth-simple');
 })->name('login');
 
 Route::get('/register', function () {
-    return view('auth');
+    return view('auth-simple');
 })->name('register');
 
 // Rotas de eventos
