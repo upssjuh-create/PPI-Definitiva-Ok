@@ -826,6 +826,106 @@
             }
         }
         
+        /**
+         * Confirma pagamento PIX automaticamente (sem validação)
+         */
+        async function confirmPixPayment() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const paymentId = registrationData.payment_id;
+                
+                if (!paymentId) {
+                    alert('Erro: ID do pagamento não encontrado.');
+                    return;
+                }
+                
+                // Confirmar pagamento diretamente
+                const response = await fetch(`${API_BASE_URL}/api/payments/${paymentId}/confirm`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: 'approved',
+                        method: 'pix'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    localStorage.setItem('registration_result', JSON.stringify({
+                        registration: registrationData,
+                        payment: result
+                    }));
+                    window.location.href = `/events/${currentEvent.id}/confirmation`;
+                } else {
+                    throw new Error('Erro ao confirmar pagamento');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao confirmar pagamento. Tente novamente.');
+            }
+        }
+        
+        /**
+         * Processa pagamento com cartão (confirma automaticamente)
+         */
+        async function handleCardPayment(event) {
+            event.preventDefault();
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const paymentId = registrationData.payment_id;
+                
+                if (!paymentId) {
+                    alert('Erro: ID do pagamento não encontrado.');
+                    return;
+                }
+                
+                const formData = new FormData(event.target);
+                const cardData = {
+                    card_number: formData.get('card_number').replace(/\s/g, ''),
+                    card_name: formData.get('card_name'),
+                    card_expiry: formData.get('card_expiry'),
+                    card_cvv: formData.get('card_cvv'),
+                    card_type: formData.get('card_type'),
+                    status: 'approved' // Confirmar automaticamente
+                };
+                
+                // Confirmar pagamento diretamente
+                const response = await fetch(`${API_BASE_URL}/api/payments/${paymentId}/confirm`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: 'approved',
+                        method: 'card',
+                        card_data: cardData
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    localStorage.setItem('registration_result', JSON.stringify({
+                        registration: registrationData,
+                        payment: result
+                    }));
+                    window.location.href = `/events/${currentEvent.id}/confirmation`;
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Erro ao processar pagamento');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(`Erro ao processar cartão: ${error.message}`);
+            }
+        }
+        
         function payLater() {
             if (!confirm('Você deseja deixar para pagar depois?\n\nLembre-se: o pagamento deve ser feito até 1 dia antes do evento.')) {
                 return;

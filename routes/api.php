@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/{paymentId}/pix/confirm', [\App\Http\Controllers\PixController::class, 'confirmPixPayment']);
     Route::post('/payments/card/token', [\App\Http\Controllers\CardController::class, 'createCardToken']);
     Route::post('/payments/{paymentId}/card', [\App\Http\Controllers\CardController::class, 'processCardPayment']);
+    Route::post('/payments/{paymentId}/confirm', [PaymentController::class, 'confirmPayment']);
 
     // Certificados
     Route::post('/registrations/{registrationId}/certificate', [CertificateController::class, 'generate']);

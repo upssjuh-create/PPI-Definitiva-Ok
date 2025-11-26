@@ -92,6 +92,42 @@ class PaymentController extends Controller
         ]);
     }
 
+    // Confirmar pagamento manualmente (sem validação)
+    public function confirmPayment(Request $request, $paymentId)
+    {
+        $payment = Payment::findOrFail($paymentId);
+
+        // Verificar se o pagamento pertence ao usuário
+        if ($payment->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|in:approved,pending',
+            'method' => 'required|in:pix,card',
+            'card_data' => 'nullable|array',
+        ]);
+
+        $transactionId = strtoupper($validated['method']) . '-' . strtoupper(Str::random(10));
+
+        $payment->update([
+            'payment_method' => $validated['method'],
+            'transaction_id' => $transactionId,
+            'status' => 'paid',
+            'paid_at' => now(),
+            'payment_data' => json_encode($validated['card_data'] ?? []),
+        ]);
+
+        // Confirmar inscrição
+        $payment->registration->update(['status' => 'confirmed']);
+
+        return response()->json([
+            'message' => 'Pagamento confirmado com sucesso',
+            'payment' => $payment,
+            'status' => 'approved',
+        ]);
+    }
+
     // Webhook para confirmar pagamento (usado por gateways)
     public function webhook(Request $request)
     {
