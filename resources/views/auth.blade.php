@@ -110,7 +110,7 @@
         <div class="min-h-screen flex items-center justify-center px-4 py-20">
             <div class="w-full max-w-md">
                 <!-- Card de Login -->
-                <div id="login-card" class="bg-white rounded-2xl form-card p-8 md:p-10">
+                <div id="login-card" class="bg-white rounded-2xl form-card p-8 md:p-10 max-h-[90vh] overflow-y-auto">
                     <h2 class="text-3xl font-bold text-gray-900 mb-8">Entrar</h2>
                     
                     <form id="login-form" onsubmit="handleLogin(event); return false;">
@@ -176,7 +176,7 @@
                 </div>
 
                 <!-- Card de Cadastro -->
-                <div id="register-card" class="bg-white rounded-2xl form-card p-8 md:p-10" style="display: none;">
+                <div id="register-card" class="bg-white rounded-2xl form-card p-8 md:p-10 max-h-[90vh] overflow-y-auto" style="display: none;">
                     <h2 class="text-3xl font-bold text-gray-900 mb-8">Cadastrar</h2>
                     
                     <form id="register-form" onsubmit="handleRegister(event); return false;">
