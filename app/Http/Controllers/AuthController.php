@@ -24,10 +24,10 @@ class AuthController extends Controller
             // student / server / external / admin
             'user_type' => 'required|in:student,server,external,admin',
     
-            // Campos do aluno
-            'registration_number' => 'required_if:user_type,student|nullable|string|max:50',
-            'course' => 'required_if:user_type,student|nullable|string|max:255',
-            'semester' => 'required_if:user_type,student|nullable|integer',
+            // Campos do aluno (todos opcionais)
+            'registration_number' => 'nullable|string|max:50',
+            'course' => 'nullable|string|max:255',
+            'semester' => 'nullable|integer',
     
             // Campos do servidor
             'server_code' => 'required_if:user_type,server|nullable|string|max:50',
