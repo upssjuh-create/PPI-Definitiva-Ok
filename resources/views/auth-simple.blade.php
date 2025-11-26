@@ -63,6 +63,12 @@
 
                     <div id="login-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
 
+                    <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p class="text-xs font-bold text-blue-900 mb-1">👤 ACESSO ADMIN:</p>
+                        <p class="text-xs text-blue-800">Email: <strong>admin@iffar.edu.br</strong></p>
+                        <p class="text-xs text-blue-800">Senha: <strong>admin123</strong></p>
+                    </div>
+
                     <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold transition mb-4">
                         ENTRAR
                     </button>
