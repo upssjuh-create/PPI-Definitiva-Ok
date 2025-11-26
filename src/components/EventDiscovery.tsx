@@ -1,5 +1,6 @@
 import React from 'react';
 import { Event } from '../App';
+import { getImageUrl } from '../utils/imageHelper';
 
 interface EventDiscoveryProps {
   events: Event[];
@@ -58,7 +59,7 @@ export const EventDiscovery: React.FC<EventDiscoveryProps> = ({
               className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
             >
               <img
-                src={event.image}
+                src={getImageUrl(event.image)}
                 alt={event.title}
                 className="w-full h-48 object-cover"
               />

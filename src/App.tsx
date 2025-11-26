@@ -11,6 +11,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { EventForm } from './components/EventForm';
 import { CompletedEvents } from './components/CompletedEvents';
 import { AdminCompletedEventDetails } from './components/AdminCompletedEventDetails';
+import { api } from './services/api';
 
 // Sample event data
 export interface Student {
@@ -451,24 +452,26 @@ export default function App() {
     setEvents((prev: Event[]) => prev.filter((e: Event) => e.id !== eventId));
   };
 
-  const handleSaveEvent = (eventData: Partial<Event>) => {
-    if (selectedEvent) {
-      // Editing existing event
-      setEvents((prev: Event[]) => prev.map((e: Event) => 
-        e.id === selectedEvent.id 
-          ? { ...e, ...eventData } as Event
-          : e
-      ));
-    } else {
-      // Creating new event
-      const newEvent: Event = {
-        id: Math.max(...events.map((e: Event) => e.id)) + 1,
-        registered: 0,
-        ...eventData
-      } as Event;
-      setEvents((prev: Event[]) => [...prev, newEvent]);
+  const handleSaveEvent = async (eventData: Partial<Event>) => {
+    try {
+      if (selectedEvent) {
+        // Editing existing event
+        const updatedEvent = await api.updateEvent(selectedEvent.id, eventData);
+        setEvents((prev: Event[]) => prev.map((e: Event) => 
+          e.id === selectedEvent.id 
+            ? { ...e, ...updatedEvent } as Event
+            : e
+        ));
+      } else {
+        // Creating new event
+        const newEvent = await api.createEvent(eventData);
+        setEvents((prev: Event[]) => [...prev, newEvent]);
+      }
+      setCurrentScreen('admindashboard');
+    } catch (error) {
+      console.error('Erro ao salvar evento:', error);
+      alert('Erro ao salvar evento. Por favor, tente novamente.');
     }
-    setCurrentScreen('admindashboard');
   };
 
   const handleViewCompletedEvent = (event: Event) => {

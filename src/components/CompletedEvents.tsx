@@ -1,5 +1,6 @@
 import React from 'react';
 import { Event } from '../App';
+import { getImageUrl } from '../utils/imageHelper';
 
 interface CompletedEventsProps {
   events: Event[];
@@ -43,7 +44,7 @@ export const CompletedEvents: React.FC<CompletedEventsProps> = ({
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={event.image}
+                src={getImageUrl(event.image)}
                 alt={event.title}
                 className="w-full h-48 object-cover"
               />

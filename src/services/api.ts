@@ -1,36 +1,70 @@
-import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+export const api = {
+  async createEvent(eventData: any) {
+    const formData = new FormData();
+    
+    // Adicionar todos os campos do evento
+    Object.keys(eventData).forEach(key => {
+      if (key === 'imageFile' && eventData[key]) {
+        formData.append('image', eventData[key]);
+      } else if (key !== 'imageFile' && eventData[key] !== undefined && eventData[key] !== null) {
+        if (Array.isArray(eventData[key])) {
+          formData.append(key, JSON.stringify(eventData[key]));
+        } else {
+          formData.append(key, eventData[key].toString());
+        }
+      }
+    });
 
-const api = axios.create({
-baseURL: 'http://localhost:8000/api',
-headers: {
-'Content-Type': 'application/json',
-'Accept': 'application/json',
-},
-withCredentials: true,
-});
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE_URL}/admin/events`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
+    if (!response.ok) {
+      throw new Error('Erro ao criar evento');
+    }
 
-api.interceptors.request.use((config) => {
-const token = localStorage.getItem('auth_token');
-if (token) {
-config.headers = config.headers || {};
-config.headers.Authorization = `Bearer ${token}`;
-}
-return config;
-});
+    return response.json();
+  },
 
+  async updateEvent(eventId: number, eventData: any) {
+    const formData = new FormData();
+    
+    // Laravel precisa do _method para simular PUT com FormData
+    formData.append('_method', 'PUT');
+    
+    // Adicionar todos os campos do evento
+    Object.keys(eventData).forEach(key => {
+      if (key === 'imageFile' && eventData[key]) {
+        formData.append('image', eventData[key]);
+      } else if (key !== 'imageFile' && eventData[key] !== undefined && eventData[key] !== null) {
+        if (Array.isArray(eventData[key])) {
+          formData.append(key, JSON.stringify(eventData[key]));
+        } else {
+          formData.append(key, eventData[key].toString());
+        }
+      }
+    });
 
-api.interceptors.response.use(
-(response) => response,
-(error) => {
-if (error.response?.status === 401) {
-localStorage.removeItem('auth_token');
-window.location.href = '/login';
-}
-return Promise.reject(error);
-}
-);
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE_URL}/admin/events/${eventId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar evento');
+    }
 
-export default api;
+    return response.json();
+  },
+};

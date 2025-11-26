@@ -27,9 +27,28 @@ export const EventForm: React.FC<EventFormProps> = ({
     image: event?.image || '',
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(event?.image || '');
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const dataToSave = { ...formData };
+    if (imageFile) {
+      (dataToSave as any).imageFile = imageFile;
+    }
+    onSave(dataToSave);
   };
 
   return (
@@ -151,14 +170,23 @@ export const EventForm: React.FC<EventFormProps> = ({
               </div>
             </div>
             <div>
-              <label className="block mb-2">URL da Imagem</label>
+              <label className="block mb-2 font-semibold">Imagem do Evento</label>
               <input
-                type="text"
-                value={formData.image}
-                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                className="w-full border rounded-lg px-4 py-2"
-                required
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full border rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+              {imagePreview && (
+                <div className="mt-4">
+                  <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full max-w-md h-48 object-cover rounded-lg border"
+                  />
+                </div>
+              )}
             </div>
             <button
               type="submit"
