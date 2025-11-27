@@ -84,6 +84,23 @@ Route::get('/admin/events/{id}/report', function ($id) {
     return view('admin.event-report');
 })->name('admin.event.report');
 
+// Rota de QR Code do evento (Admin)
+Route::get('/admin/events/{id}/qrcode', function ($id) {
+    $event = \App\Models\Event::findOrFail($id);
+    
+    // Gerar código de check-in se não existir
+    if (!$event->check_in_code) {
+        do {
+            $code = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+        } while (\App\Models\Event::where('check_in_code', $code)->exists());
+        
+        $event->check_in_code = $code;
+        $event->save();
+    }
+    
+    return view('admin.event-qrcode', compact('event'));
+})->name('admin.event.qrcode');
+
 // Rotas de inscrição
 Route::get('/events/{id}/register', function ($id) {
     return view('confirm-registration');
