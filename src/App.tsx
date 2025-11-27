@@ -11,6 +11,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { EventForm } from './components/EventForm';
 import { CompletedEvents } from './components/CompletedEvents';
 import { AdminCompletedEventDetails } from './components/AdminCompletedEventDetails';
+import { EventQRCode } from './components/EventQRCode';
 import { api } from './services/api';
 
 // Sample event data
@@ -68,6 +69,7 @@ export interface Event {
   description: string;
   speakers: string[];
   tags: string[];
+  checkInCode?: string;
   paymentConfig?: {
     acceptsPix: boolean;
     pixKey?: string;
@@ -362,7 +364,7 @@ export default function App() {
   const [showLanding, setShowLanding] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState<'student' | 'admin'>('student');
-  const [currentScreen, setCurrentScreen] = useState<'discovery' | 'details' | 'registration' | 'payment' | 'certificate' | 'myevents' | 'admindashboard' | 'eventform' | 'completedevents' | 'admincompletedevent'>('discovery');
+  const [currentScreen, setCurrentScreen] = useState<'discovery' | 'details' | 'registration' | 'payment' | 'certificate' | 'myevents' | 'admindashboard' | 'eventform' | 'completedevents' | 'admincompletedevent' | 'eventqrcode'>('discovery');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>(sampleEvents);
 
@@ -479,6 +481,11 @@ export default function App() {
     setCurrentScreen('admincompletedevent');
   };
 
+  const handleGenerateQRCode = (event: Event) => {
+    setSelectedEvent(event);
+    setCurrentScreen('eventqrcode');
+  };
+
   // Show landing page first
   if (showLanding) {
     return <Landing onGetStarted={handleGetStarted} />;
@@ -558,6 +565,7 @@ export default function App() {
           onEditEvent={handleEditEvent}
           onDeleteEvent={handleDeleteEvent}
           onViewCompletedEvent={handleViewCompletedEvent}
+          onGenerateQRCode={handleGenerateQRCode}
         />
       )}
       
@@ -584,6 +592,14 @@ export default function App() {
       
       {currentScreen === 'admincompletedevent' && selectedEvent && (
         <AdminCompletedEventDetails 
+          event={selectedEvent}
+          onBack={handleAdminDashboard}
+          onLogout={handleLogout}
+        />
+      )}
+      
+      {currentScreen === 'eventqrcode' && selectedEvent && (
+        <EventQRCode 
           event={selectedEvent}
           onBack={handleAdminDashboard}
           onLogout={handleLogout}

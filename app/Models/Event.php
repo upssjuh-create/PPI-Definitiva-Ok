@@ -26,6 +26,7 @@ class Event extends Model
         'certificate_description',
         'signature1_id',
         'signature2_id',
+        'check_in_code',
     ];
 
     protected $casts = [

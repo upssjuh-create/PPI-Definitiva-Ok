@@ -132,9 +132,22 @@ class EventController extends Controller
                                          ->store('events', 'public');
         }
 
+        // Gerar código único de check-in
+        $validated['check_in_code'] = $this->generateCheckInCode();
+
         $event = Event::create($validated);
 
         return response()->json($event, 201);
+    }
+
+    // Gerar código único de check-in
+    private function generateCheckInCode()
+    {
+        do {
+            $code = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+        } while (Event::where('check_in_code', $code)->exists());
+        
+        return $code;
     }
 
     // Atualizar evento (Admin)
