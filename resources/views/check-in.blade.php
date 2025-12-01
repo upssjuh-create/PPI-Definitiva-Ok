@@ -165,7 +165,7 @@
                     <input 
                         type="text" 
                         id="checkin-code" 
-                        placeholder="DIGITE QUALQUER CÓDIGO"
+                        placeholder="EX: 1-A3F7B2C9"
                         class="w-full px-6 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5f3f] focus:border-[#1a5f3f] text-center text-2xl font-mono font-bold uppercase tracking-wider bg-white shadow-sm"
                         maxlength="20"
                         oninput="this.value = this.value.toUpperCase()"
@@ -177,8 +177,8 @@
                             </svg>
                             Digite o código fornecido no evento
                         </p>
-                        <p class="text-xs text-green-600 font-semibold text-center">
-                            ✅ Qualquer código será aceito para confirmar sua presença
+                        <p class="text-xs text-blue-600 font-semibold text-center">
+                            🔒 O código será validado com o evento
                         </p>
                     </div>
                 </div>
