@@ -9,6 +9,7 @@ interface EventDiscoveryProps {
   onMyEvents: () => void;
   onAdminDashboard: () => void;
   onCompletedEvents: () => void;
+  onCheckIn?: () => void;
 }
 
 export const EventDiscovery: React.FC<EventDiscoveryProps> = ({
@@ -18,6 +19,7 @@ export const EventDiscovery: React.FC<EventDiscoveryProps> = ({
   onMyEvents,
   onAdminDashboard,
   onCompletedEvents,
+  onCheckIn,
 }) => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -25,6 +27,14 @@ export const EventDiscovery: React.FC<EventDiscoveryProps> = ({
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Descobrir Eventos</h1>
           <div className="space-x-4">
+            {onCheckIn && (
+              <button
+                onClick={onCheckIn}
+                className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600"
+              >
+                Check-in
+              </button>
+            )}
             <button
               onClick={onMyEvents}
               className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"

@@ -12,6 +12,7 @@ import { EventForm } from './components/EventForm';
 import { CompletedEvents } from './components/CompletedEvents';
 import { AdminCompletedEventDetails } from './components/AdminCompletedEventDetails';
 import { EventQRCode } from './components/EventQRCode';
+import { CheckIn } from './components/CheckIn';
 import { api } from './services/api';
 
 // Sample event data
@@ -364,7 +365,7 @@ export default function App() {
   const [showLanding, setShowLanding] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState<'student' | 'admin'>('student');
-  const [currentScreen, setCurrentScreen] = useState<'discovery' | 'details' | 'registration' | 'payment' | 'certificate' | 'myevents' | 'admindashboard' | 'eventform' | 'completedevents' | 'admincompletedevent' | 'eventqrcode'>('discovery');
+  const [currentScreen, setCurrentScreen] = useState<'discovery' | 'details' | 'registration' | 'payment' | 'certificate' | 'myevents' | 'admindashboard' | 'eventform' | 'completedevents' | 'admincompletedevent' | 'eventqrcode' | 'checkin'>('discovery');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>(sampleEvents);
 
@@ -486,6 +487,14 @@ export default function App() {
     setCurrentScreen('eventqrcode');
   };
 
+  const handleCheckIn = () => {
+    setCurrentScreen('checkin');
+  };
+
+  const handleCheckInSuccess = () => {
+    setCurrentScreen('myevents');
+  };
+
   // Show landing page first
   if (showLanding) {
     return <Landing onGetStarted={handleGetStarted} />;
@@ -506,6 +515,7 @@ export default function App() {
           onMyEvents={handleMyEvents}
           onAdminDashboard={handleAdminDashboard}
           onCompletedEvents={handleCompletedEvents}
+          onCheckIn={handleCheckIn}
         />
       )}
       
@@ -603,6 +613,14 @@ export default function App() {
           event={selectedEvent}
           onBack={handleAdminDashboard}
           onLogout={handleLogout}
+        />
+      )}
+      
+      {currentScreen === 'checkin' && (
+        <CheckIn 
+          onBack={handleBackToDiscovery}
+          onLogout={handleLogout}
+          onCheckInSuccess={handleCheckInSuccess}
         />
       )}
     </div>

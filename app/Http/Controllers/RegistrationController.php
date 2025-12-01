@@ -79,25 +79,72 @@ class RegistrationController extends Controller
         ], 201);
     }
 
-    // Check-in no evento
+    // Check-in no evento com validação de código
+    public function checkInWithCode(Request $request, $eventId)
+    {
+        $validated = $request->validate([
+            'check_in_code' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        $event = Event::findOrFail($eventId);
+
+        // Validar o código do evento
+        if ($event->check_in_code !== $validated['check_in_code']) {
+            return response()->json([
+                'message' => 'Código de check-in inválido para este evento'
+            ], 400);
+        }
+
+        // Buscar inscrição do usuário neste evento
+        $registration = Registration::where('user_id', $user->id)
+                                   ->where('event_id', $eventId)
+                                   ->where('status', 'confirmed')
+                                   ->with(['user', 'event'])
+                                   ->first();
+
+        if (!$registration) {
+            return response()->json([
+                'message' => 'Você não está inscrito neste evento ou sua inscrição não foi confirmada'
+            ], 404);
+        }
+
+        if ($registration->checked_in) {
+            return response()->json([
+                'message' => 'Check-in já realizado anteriormente',
+                'check_in_time' => $registration->check_in_time,
+            ], 400);
+        }
+
+        // Realizar check-in
+        $registration->update([
+            'checked_in' => true,
+            'check_in_time' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Check-in realizado com sucesso',
+            'registration' => $registration,
+            'event' => $event,
+        ]);
+    }
+
+    // Check-in no evento (método antigo - mantido para compatibilidade)
     public function checkIn(Request $request)
     {
         $validated = $request->validate([
             'check_in_code' => 'required|string',
-            'registration_id' => 'nullable|integer', // Opcional: ID da inscrição
+            'registration_id' => 'nullable|integer',
         ]);
 
         $user = Auth::user();
         
-        // Se veio registration_id, usar ele diretamente (mais seguro)
         if (isset($validated['registration_id'])) {
             $registration = Registration::where('id', $validated['registration_id'])
                                        ->where('user_id', $user->id)
                                        ->with(['user', 'event'])
                                        ->first();
         } else {
-            // Caso contrário, buscar pelo código (qualquer código serve para o usuário)
-            // Buscar a inscrição mais recente do usuário que ainda não fez check-in
             $registration = Registration::where('user_id', $user->id)
                                        ->where('checked_in', false)
                                        ->with(['user', 'event'])
@@ -118,7 +165,6 @@ class RegistrationController extends Controller
             ], 400);
         }
 
-        // Realizar check-in (aceita qualquer código)
         $registration->update([
             'checked_in' => true,
             'check_in_time' => now(),

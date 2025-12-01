@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations']);
     Route::post('/registrations/{registrationId}/cancel', [RegistrationController::class, 'cancel']);
     Route::post('/check-in', [RegistrationController::class, 'checkIn']);
+    Route::post('/events/{eventId}/check-in', [RegistrationController::class, 'checkInWithCode']);
 
     // Pagamentos
     Route::get('/payments/{paymentId}/pix/generate', [\App\Http\Controllers\PixController::class, 'generatePixQRCode']);
