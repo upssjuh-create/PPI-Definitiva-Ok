@@ -130,8 +130,8 @@
                 
                 <p class="text-center text-gray-700 text-base mb-3">Certificamos que</p>
                 
-                <h4 class="text-center font-playfair text-3xl font-bold text-[#1a5f3f] mb-4 signature-line px-8">
-                    {{ $certificate->user->name }}
+                <h4 class="text-center font-playfair text-3xl font-bold text-[#1a5f3f] mb-4 px-8">
+                    <span class="inline-block border-b-2 border-gray-800 pb-1 px-4">{{ $certificate->user->name }}</span>
                 </h4>
                 
                 <p class="text-center text-gray-700 text-base leading-relaxed px-4">
